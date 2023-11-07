@@ -69,7 +69,7 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 39, 36, 36),
+      backgroundColor: const Color.fromARGB(255, 39, 36, 36),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -78,7 +78,7 @@ class _WeatherPageState extends State<WeatherPage> {
             Column(
               children: [
                 const Padding(
-                  padding: EdgeInsets.only(bottom: 12),
+                  padding: EdgeInsets.only(bottom: 12, top: 12),
                   child: Icon(
                     Icons.location_pin,
                     color: Color.fromARGB(255, 216, 215, 215),
@@ -90,6 +90,8 @@ class _WeatherPageState extends State<WeatherPage> {
                   _weather?.cityName ?? "Loading city...",
                   style: const TextStyle(
                     color: Color.fromARGB(255, 216, 215, 215),
+                    fontSize: 20,
+                    fontFamily: "monospace",
                   ),
                 ),
               ],
@@ -99,9 +101,12 @@ class _WeatherPageState extends State<WeatherPage> {
             Lottie.asset(getWeatherAnimation(_weather?.mainCondition)),
 
             // temperature
-            Text("${_weather?.temperature.round()}°C",
+            Text(
+              "${_weather?.temperature.round()}°",
               style: const TextStyle(
                   color: Color.fromARGB(255, 202, 202, 202),
+                fontSize: 34,
+                fontFamily: "monospace",
                 ),
             ),
 
