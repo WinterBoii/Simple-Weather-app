@@ -1,4 +1,6 @@
 // Can successfully get weather data for a given city name
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:simple_weather/services/weather_service.dart';
 

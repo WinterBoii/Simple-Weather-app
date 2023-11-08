@@ -32,7 +32,7 @@ class _WeatherPageState extends State<WeatherPage> {
 
     // any errors
     catch (e) {
-      print(e);
+      //print(e);
     }
   }
 
@@ -117,7 +117,7 @@ class _WeatherPageState extends State<WeatherPage> {
                 Text(
                   _weather?.cityName ?? "Loading city...",
                   style: GoogleFonts.bebasNeue(
-                    color: Color.fromARGB(255, 216, 215, 215),
+                    color: const Color.fromARGB(255, 216, 215, 215),
                     fontSize: 47,
                   ),
                 ),
@@ -131,7 +131,7 @@ class _WeatherPageState extends State<WeatherPage> {
             Text(
               "${_weather?.temperature.round()}°",
                 style: GoogleFonts.bebasNeue(
-                  color: Color.fromARGB(255, 216, 215, 215),
+                  color: const Color.fromARGB(255, 216, 215, 215),
                   fontSize: 87,
                 )
             ),
