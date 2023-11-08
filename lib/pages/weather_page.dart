@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 
 import '../models/weather_model.dart';
@@ -37,24 +38,51 @@ class _WeatherPageState extends State<WeatherPage> {
 
   // weather animation
   String getWeatherAnimation(String? mainCondition) {
-    if (mainCondition == null) return 'assets/sun.json';
+    int hour = DateTime.now().hour;
+
+    if (mainCondition == null) {
+      if (hour > 8 && hour <= 16) {
+        return 'assets/sun.json';
+      } else {
+        return 'assets/moon.json';
+      }
+    }
 
     switch (mainCondition.toLowerCase()) {
       case 'clouds':
+        if (hour > 8 && hour <= 16) {
+          return 'assets/partly-cloudy.json';
+        } else {
+          return 'assets/partly-cloudy-night.json';
+        }
       case 'mist':
+        return 'assets/mist.json';
       case 'smoke':
       case 'haze':
       case 'dust':
       case 'fog':
         return 'assets/cloud.json';
       case 'rain':
+        if (hour > 8 && hour <= 16) {
+          return 'assets/rain.json';
+        } else {
+          return 'assets/rain-night.json';
+        }
       case 'drizzle':
       case 'shower rain':
-        return 'assets/rain.json';
+        if (hour > 8 && hour <= 16) {
+          return 'assets/rain.json';
+        } else {
+          return 'assets/rain-night.json';
+        }
       case 'thunderstorm':
         return 'assets/thunder.json';
       default:
-        return 'assets/sun.json';
+        if (hour > 8 && hour <= 16) {
+          return 'assets/sun.json';
+        } else {
+          return 'assets/moon.json';
+        }
     }
   }
 
@@ -69,7 +97,7 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 39, 36, 36),
+      backgroundColor: const Color.fromARGB(255, 36, 36, 36),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -82,16 +110,15 @@ class _WeatherPageState extends State<WeatherPage> {
                   child: Icon(
                     Icons.location_pin,
                     color: Color.fromARGB(255, 216, 215, 215),
-                    size: 28.0,
+                    size: 29.0,
                   ),
                 ),
                 // city name
                 Text(
                   _weather?.cityName ?? "Loading city...",
-                  style: const TextStyle(
+                  style: GoogleFonts.bebasNeue(
                     color: Color.fromARGB(255, 216, 215, 215),
-                    fontSize: 20,
-                    fontFamily: "monospace",
+                    fontSize: 47,
                   ),
                 ),
               ],
@@ -103,19 +130,18 @@ class _WeatherPageState extends State<WeatherPage> {
             // temperature
             Text(
               "${_weather?.temperature.round()}°",
-              style: const TextStyle(
-                  color: Color.fromARGB(255, 202, 202, 202),
-                fontSize: 34,
-                fontFamily: "monospace",
-                ),
+                style: GoogleFonts.bebasNeue(
+                  color: Color.fromARGB(255, 216, 215, 215),
+                  fontSize: 87,
+                )
             ),
 
             // weather condition
-            Text(_weather?.mainCondition ?? "",
+            /* Text(_weather?.mainCondition ?? "",
               style: const TextStyle(
                 color: Color.fromARGB(255, 202, 202, 202),
               ),
-            ),
+            ), */
           ],
         ),
       ),
