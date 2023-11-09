@@ -7,14 +7,17 @@ import 'package:http/http.dart' as http;
 class WeatherService {
 
   // ignore: constant_identifier_names
-  static const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
+  static const BASE_URL = 'https://api.openweathermap.org/data/3.0/onecall';
   final String apiKey;
 
   WeatherService(this.apiKey);
 
-  Future<Weather> getWeather(String cityName) async {
+  Future<Weather> getWeather(Position position) async {
+    var lat = position.latitude;
+    var lon = position.longitude;
+
     final response = await http.
-      get(Uri.parse('$BASE_URL?q=$cityName&appid=$apiKey&units=metric'));
+      get(Uri.parse('$BASE_URL?lat=$lat&lon=$lon&appid=$apiKey'));
 
     if (response.statusCode == 200) {
       return Weather.fromJson(jsonDecode(response.body));
@@ -23,7 +26,7 @@ class WeatherService {
     }
   }
 
-  Future<String> getCurrentCity() async {
+  Future<Position> getCurrentPosition() async {
     // get permission from user
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -32,16 +35,8 @@ class WeatherService {
 
     // fetch the current location
     Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.high);
 
-    // convert the location into a list of placemark objects
-    List<Placemark> placemarks =
-      await placemarkFromCoordinates(position.latitude, position.longitude);
-
-    //print(placemarks);
-    // extract the city name from the first placemark
-    String? city = placemarks[0].subLocality;
-
-    return city ?? "";
+    return position;
   }
 }
