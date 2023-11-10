@@ -117,12 +117,13 @@ class _WeatherPageState extends State<WeatherPage> {
                     color: Color.fromARGB(255, 202, 202, 202),
                   ),
                 ),
-                /* Text(
-                  _weather!.sunrise.toString(),
-                  style: const TextStyle(
+                const Text(
+                  "*Winter",
+                  style: TextStyle(
                     color: Color.fromARGB(255, 202, 202, 202),
+                      fontStyle: FontStyle.italic
                   ),
-                ), */
+                ),
               ],
             ),
           ],
