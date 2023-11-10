@@ -14,26 +14,34 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
-  // api key
-  final _weatherService = WeatherService('6cb67d7d502d5ceab0e7ffc381453e90');
+  // ? api key
+  final _weatherService = WeatherService(
+      '6cb67d7d502d5ceab0e7ffc381453e90', 'c1cd135b14944312acecb0fbba0d32f4');
   Weather? _weather;
+  Weather? _weatherAlt;
 
   // fetch weather
   _fetchWeather() async {
-    // get current city
+    // get current position
     Position position = await _weatherService.getCurrentPosition();
 
     // get weather for city
     try {
       final weather = await _weatherService.getWeather(position);
+
+      // get current city
+      String cityName = weather.cityName;
+      print(cityName);
+      //?final weatherAlt = await _weatherService.getWeatherByCity(weather.cityName);
       setState(() {
         _weather = weather;
+        //?_weatherAlt = weatherAlt;
       });
     }
 
     // any errors
     catch (e) {
-      //print(e);
+      print(e);
     }
   }
 
@@ -126,16 +134,16 @@ class _WeatherPageState extends State<WeatherPage> {
             ),
 
             // animation
-            Lottie.asset(getWeatherAnimation(_weather?.mainCondition)),
+            //Lottie.asset(getWeatherAnimation(_weatherAlt?.mainCondition)),
 
             // temperature
-            Text(
-              "${_weather?.temperature.round()}°",
+            /* Text(
+              "${_weatherAlt?.temperature.round()}°",
                 style: GoogleFonts.bebasNeue(
                   color: const Color.fromARGB(255, 216, 215, 215),
                   fontSize: 87,
                 )
-            ),
+            ), */
 
             // weather condition
             /* Text(_weather?.mainCondition ?? "",
