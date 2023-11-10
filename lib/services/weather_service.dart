@@ -10,16 +10,15 @@ class WeatherService {
   static const BASE_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
   final String apiKey;
-  final String apiKeyReverse;
 
-  WeatherService(this.apiKey, this.apiKeyReverse);
+  WeatherService(this.apiKey);
 
   Future<Weather> getWeather(Position position) async {
     var lat = position.latitude;
     var lon = position.longitude;
 
     final url =
-        'https://api.opencagedata.com/geocode/v1/json?q=$lat+$lon&key=$apiKeyReverse';
+        'https://api.opencagedata.com/geocode/v1/json?q=$lat+$lon&key=$apiKey';
 
     final response = await http.get(Uri.parse(url));
 

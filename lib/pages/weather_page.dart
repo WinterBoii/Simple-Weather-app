@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:simple_weather/models/temperature_model.dart';
+import 'package:simple_weather/services/temperature_service.dart';
 
 import '../models/weather_model.dart';
 import '../services/weather_service.dart';
@@ -15,10 +17,12 @@ class WeatherPage extends StatefulWidget {
 
 class _WeatherPageState extends State<WeatherPage> {
   // ? api key
-  final _weatherService = WeatherService(
-      '6cb67d7d502d5ceab0e7ffc381453e90', 'c1cd135b14944312acecb0fbba0d32f4');
+  final _weatherService = WeatherService('c1cd135b14944312acecb0fbba0d32f4');
+  final _temperatureService =
+      TemperatureService('6cb67d7d502d5ceab0e7ffc381453e90');
+
   Weather? _weather;
-  Weather? _weatherAlt;
+  Temperature? _temperature;
 
   // fetch weather
   _fetchWeather() async {
@@ -31,11 +35,10 @@ class _WeatherPageState extends State<WeatherPage> {
 
       // get current city
       String cityName = weather.cityName;
-      print(cityName);
-      //?final weatherAlt = await _weatherService.getWeatherByCity(weather.cityName);
+      final temperature = await _temperatureService.getWeatherByCity(cityName);
       setState(() {
         _weather = weather;
-        //?_weatherAlt = weatherAlt;
+        _temperature = temperature;
       });
     }
 
@@ -112,45 +115,58 @@ class _WeatherPageState extends State<WeatherPage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
 
-            Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 12, top: 12),
-                  child: Icon(
-                    Icons.location_pin,
-                    color: Color.fromARGB(255, 216, 215, 215),
-                    size: 29.0,
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 12, top: 12),
+                    child: Icon(
+                      Icons.location_pin,
+                      color: Color.fromARGB(255, 216, 215, 215),
+                      size: 29.0,
+                    ),
                   ),
-                ),
-                // city name
-                Text(
-                  _weather?.cityName ?? "Loading city...",
-                  style: GoogleFonts.bebasNeue(
-                    color: const Color.fromARGB(255, 216, 215, 215),
-                    fontSize: 47,
+                  // city name
+                  Text(
+                    _weather?.cityName ?? "Loading city...",
+                    style: GoogleFonts.bebasNeue(
+                      color: const Color.fromARGB(255, 216, 215, 215),
+                      fontSize: 47,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
 
             // animation
-            //Lottie.asset(getWeatherAnimation(_weatherAlt?.mainCondition)),
+            Lottie.asset(getWeatherAnimation(_temperature?.mainCondition)),
 
             // temperature
-            /* Text(
-              "${_weatherAlt?.temperature.round()}°",
-                style: GoogleFonts.bebasNeue(
-                  color: const Color.fromARGB(255, 216, 215, 215),
-                  fontSize: 87,
-                )
-            ), */
+            Column(
+              children: [
+                Text("${_temperature?.temperature.round()}°",
+                    style: GoogleFonts.bebasNeue(
+                      color: const Color.fromARGB(255, 216, 215, 215),
+                      fontSize: 87,
+                    )
+                ),
 
-            // weather condition
-            /* Text(_weather?.mainCondition ?? "",
-              style: const TextStyle(
-                color: Color.fromARGB(255, 202, 202, 202),
-              ),
-            ), */
+                // weather description
+                Text(
+                  _temperature?.description ?? "",
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 202, 202, 202),
+                  ),
+                ),
+                /* Text(
+                  _weather!.sunrise.toString(),
+                  style: const TextStyle(
+                    color: Color.fromARGB(255, 202, 202, 202),
+                  ),
+                ), */
+              ],
+            ),
           ],
         ),
       ),
