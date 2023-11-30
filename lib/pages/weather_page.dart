@@ -4,10 +4,12 @@ import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:simple_weather/models/temperature_model.dart';
+import 'package:simple_weather/pages/weather_search_page.dart';
 import 'package:simple_weather/services/temperature_service.dart';
 
 import '../models/weather_model.dart';
 import '../services/weather_service.dart';
+import '../utiliities/weather_animation.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -25,8 +27,7 @@ class _WeatherPageState extends State<WeatherPage> {
   Weather? _weather;
   Temperature? _temperature;
 
-  DateTime sunriseTime = DateTime.now();
-  DateTime sunsetTime = DateTime.now();
+  late Future _fetchWeatherFuture;
 
   // fetch weather
   _fetchWeather() async {
@@ -44,11 +45,8 @@ class _WeatherPageState extends State<WeatherPage> {
       setState(() {
         _weather = weather;
         _temperature = temperature;
-
-        sunriseTime =
-            DateTime.fromMillisecondsSinceEpoch(weather.sunrise * 1000);
-        sunsetTime = DateTime.fromMillisecondsSinceEpoch(weather.sunset * 1000);
       });
+      return;
     }
 
     // any errors
@@ -62,120 +60,133 @@ class _WeatherPageState extends State<WeatherPage> {
   void initState() {
     super.initState();
 
-    _fetchWeather();
+    _fetchWeatherFuture = _fetchWeather();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 36, 36, 36),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(12.0),
+    return FutureBuilder(
+      future: _fetchWeatherFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('Error fetching data'));
+        } else {
+          return Scaffold(
+            resizeToAvoidBottomInset: true,
+            backgroundColor: const Color.fromARGB(255, 36, 36, 36),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                showSearchPage(context);
+              },
+              child: const Icon(
+                Icons.search,
+                color: Color.fromARGB(255, 36, 36, 36),
+                size: 29.0,
+              ),
+            ),
+            body: Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 12, top: 12),
-                    child: Icon(
-                      Icons.location_pin,
-                      color: Color.fromARGB(255, 216, 215, 215),
-                      size: 29.0,
-                    ),
+                  Column(
+                    children: <Widget>[
+                      const Icon(
+                        Icons.location_pin,
+                        color: Color.fromARGB(255, 216, 215, 215),
+                        size: 29.0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          const SizedBox(
+                              width: 5), // Add space between icon and text
+                          // city name
+                          Text(
+                            _weather?.cityName ?? "Loading city...",
+                            style: GoogleFonts.bebasNeue(
+                              color: const Color.fromARGB(255, 216, 215, 215),
+                              fontSize: 54,
+                            ),
+                          ),
+                          const SizedBox(
+                              width: 5), // Add space between text and icon
+                          IconButton(
+                            onPressed: () async {
+                              // TODO Add refresh functionality
+                              await _fetchWeather();
+                            },
+                            icon: const Icon(
+                              Icons.refresh, // Add refresh icon
+                              color: Color.fromARGB(255, 216, 215, 215),
+                              size: 29.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  // city name
-                  Text(
-                    _weather?.cityName ?? "Loading city...",
-                    style: GoogleFonts.bebasNeue(
-                      color: const Color.fromARGB(255, 216, 215, 215),
-                      fontSize: 54,
-                    ),
-                  ),
+                  // animation
+                  Lottie.asset(getWeatherAnimation(_temperature?.mainCondition,
+                      _temperature?.sunrise, _temperature?.sunset)),
+                  // temperature
+                  TemperatureCard(),
                 ],
               ),
             ),
-
-            // animation
-            Lottie.asset(getWeatherAnimation(_temperature?.mainCondition)),
-
-            // temperature
-            Column(
-              children: <Widget>[
-                Text("${_temperature?.temperature.round()}°".padLeft(4),
-                    style: GoogleFonts.bebasNeue(
-                      color: const Color.fromARGB(255, 216, 215, 215),
-                      fontSize: 87,
-                    )
-                ),
-
-                // weather description
-                Text(
-                  _temperature?.description ?? "ey",
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 202, 202, 202),
-                  ),
-                ),
-                const Text(
-                  "*Winter",
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 202, 202, 202),
-                      fontStyle: FontStyle.italic
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+          );
+        }
+      },
     );
   }
 
-  // weather animation
-  String getWeatherAnimation(String? mainCondition) {
-    DateTime now = DateTime.now();
+  Future<dynamic> showSearchPage(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      isDismissible: true,
+      useSafeArea: true,
+      enableDrag: true,
+      builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 1.0,
+          maxChildSize: 1.0,
+          builder: (_, controller) => const WeatherSearchPage()),
+      backgroundColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+    );
+  }
 
-    if (mainCondition == null) {
-      return 'assets/loading.json';
-    }
+  Column TemperatureCard() {
+    return Column(
+      children: <Widget>[
+        Text("${_temperature?.temperature.round()}°".padLeft(4),
+            style: GoogleFonts.bebasNeue(
+              color: const Color.fromARGB(255, 216, 215, 215),
+              fontSize: 87,
+            )),
 
-    switch (mainCondition.toLowerCase()) {
-      case 'clouds':
-        if (now.isAfter(sunriseTime) && now.isBefore(sunsetTime)) {
-          return 'assets/partly-cloudy.json';
-        } else {
-          return 'assets/partly-cloudy-night.json';
-        }
-      case 'mist':
-        return 'assets/mist.json';
-      case 'smoke':
-      case 'haze':
-      case 'dust':
-      case 'fog':
-        return 'assets/cloud.json';
-      case 'rain':
-        if (now.isAfter(sunriseTime) && now.isBefore(sunsetTime)) {
-          return 'assets/rain.json';
-        } else {
-          return 'assets/rain-night.json';
-        }
-      case 'drizzle':
-      case 'shower rain':
-        if (now.isAfter(sunriseTime) && now.isBefore(sunsetTime)) {
-          return 'assets/rain.json';
-        } else {
-          return 'assets/rain-night.json';
-        }
-      case 'thunderstorm':
-        return 'assets/thunder.json';
-      default:
-        if (now.isAfter(sunriseTime) && now.isBefore(sunsetTime)) {
-          return 'assets/sun.json';
-        } else {
-          return 'assets/moon.json';
-        }
-    }
+        // weather description
+        Text(
+          _temperature?.description ?? "ey",
+          style: const TextStyle(
+            color: Color.fromARGB(255, 202, 202, 202),
+          ),
+        ),
+        const Text(
+          "> Winter",
+          style: TextStyle(
+              color: Color.fromARGB(255, 202, 202, 202),
+              fontStyle: FontStyle.italic),
+        ),
+      ],
+    );
   }
 
   String _formatTime(DateTime time, BuildContext context) {

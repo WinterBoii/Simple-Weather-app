@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import '../models/temperature_model.dart';
 
@@ -11,6 +12,12 @@ class TemperatureService {
   TemperatureService(this.apiKey);
 
   Future<Temperature> getWeatherByCity(String cityName) async {
+
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
     final response = await http
         .get(Uri.parse('$BASE_URL?q=$cityName&appid=$apiKey&units=metric'));
 

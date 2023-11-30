@@ -1,24 +1,17 @@
 class Weather {
   String cityName;
-  int sunrise;
-  int sunset;
 
   Weather(
       {required this.cityName,
-      required this.sunrise,
-      required this.sunset});
+  });
 
   factory Weather.fromJson(Map<String, dynamic> json) {
     return Weather(
       // Get city name
       cityName: json['results'][0]['components']['city'] ??
-          json['results'][0]['components']['town'],
-
-      // Get sunrise
-      sunrise: json['results'][0]['annotations']['sun']['rise']['astronomical'],
-
-      // Get sunset
-      sunset: json['results'][0]['annotations']['sun']['set']['astronomical'],
+          json['results'][0]['components']['town'] ??
+          json['results'][0]['components']['village'] ??
+          json['results'][0]['components']['isolated_dwelling'],
     );
   }
 }

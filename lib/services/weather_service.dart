@@ -16,15 +16,16 @@ class WeatherService {
     final lon = position.longitude;
 
     final url = '$BASE_URL?q=$lat,$lon&key=$apiKey';
+    print(url);
 
     try {
       final response = await http.get(Uri.parse(url));
-
       if (response.statusCode != 200) {
         return null;
       }
 
       Map<String, dynamic> data = jsonDecode(response.body);
+      //print(Weather.fromJson(data));
       return Weather.fromJson(data);
     } catch (e) {
       throw Exception('Error getting weather data');
