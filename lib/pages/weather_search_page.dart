@@ -24,10 +24,9 @@ class _WeatherSearchPageState extends State<WeatherSearchPage> {
           backgroundColor: const Color.fromARGB(255, 36, 36, 36),
           foregroundColor: const Color.fromARGB(255, 216, 215, 215),
           title: _citySearched
-              ? Text(_searchedCity,
-                  style: const TextStyle(
-                      color: Color.fromARGB(255, 216, 215, 215)))
+              ? null
               : TextField(
+                  controller: TextEditingController(text: _searchedCity),
                   cursorColor: const Color.fromARGB(255, 216, 215, 215),
                   decoration: const InputDecoration(
                     focusedBorder: UnderlineInputBorder(
@@ -78,54 +77,59 @@ class CurrentWeather extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data!.cityName.isNotEmpty) {
             Temperature? weather = snapshot.data;
-            return Center(
-              child: ListView(
-                padding: const EdgeInsets.all(19),
-                children: <Widget>[
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            return Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ListView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(19),
                     children: <Widget>[
-                      const Icon(
-                        Icons.location_pin,
-                        color: Color.fromARGB(255, 216, 215, 215),
-                        size: 29.0,
+                      Column(
+                        children: <Widget>[
+                          const Icon(
+                            Icons.location_pin,
+                            color: Color.fromARGB(255, 216, 215, 215),
+                            size: 29.0,
+                          ),
+                          // city name
+                          Text(
+                            weather?.cityName ?? "Loading city...",
+                            style: GoogleFonts.bebasNeue(
+                              color: const Color.fromARGB(255, 216, 215, 215),
+                              fontSize: 54,
+                            ),
+                          ),
+                        ],
                       ),
-                      // city name
-                      Text(
-                        weather?.cityName ?? "Loading city...",
-                        style: GoogleFonts.bebasNeue(
-                          color: const Color.fromARGB(255, 216, 215, 215),
-                          fontSize: 54,
-                        ),
-                      ),
-                    ],
-                  ),
 
-                  // animation
-                  Lottie.asset(getWeatherAnimation(weather?.mainCondition,
-                      weather?.sunrise, weather?.sunset)),
+                      // animation
+                      Lottie.asset(getWeatherAnimation(weather?.mainCondition,
+                          weather?.sunrise, weather?.sunset)),
 
-                  // temperature
-                  Column(
-                    children: <Widget>[
-                      Text("${weather?.temperature.round()}°".padLeft(4),
-                          style: GoogleFonts.bebasNeue(
-                            color: const Color.fromARGB(255, 216, 215, 215),
-                            fontSize: 87,
-                          )),
+                      // temperature
+                      Column(
+                        children: <Widget>[
+                          Text("${weather?.temperature.round()}°".padLeft(4),
+                              style: GoogleFonts.bebasNeue(
+                                color: const Color.fromARGB(255, 216, 215, 215),
+                                fontSize: 87,
+                              )),
 
-                      // weather description
-                      Text(
-                        weather?.description ?? "ey",
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 202, 202, 202),
-                        ),
-                      ),
-                      const Text(
-                        "*Winter",
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 202, 202, 202),
-                            fontStyle: FontStyle.italic),
+                          // weather description
+                          Text(
+                            weather?.description ?? "ey",
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 202, 202, 202),
+                            ),
+                          ),
+                          const Text(
+                            "*Winter",
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 202, 202, 202),
+                                fontStyle: FontStyle.italic),
+                          ),
+                        ],
                       ),
                     ],
                   ),

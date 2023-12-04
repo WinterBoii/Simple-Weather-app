@@ -165,6 +165,7 @@ class _WeatherPageState extends State<WeatherPage> {
 
   Column TemperatureCard() {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Text("${_temperature?.temperature.round()}°".padLeft(4),
             style: GoogleFonts.bebasNeue(
