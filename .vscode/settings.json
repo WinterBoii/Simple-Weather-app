@@ -1,4 +1,5 @@
 {
   "cmake.configureOnOpen": false,
-  "cSpell.words": ["Geolocator", "placemarks"]
+  "cSpell.words": ["Geolocator", "placemarks"],
+  "java.configuration.updateBuildConfiguration": "interactive"
 }
