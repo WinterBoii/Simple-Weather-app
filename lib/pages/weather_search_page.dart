@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:simple_weather/models/temperature_model.dart';
 import 'package:simple_weather/services/temperature_service.dart';
-import 'package:simple_weather/utiliities/weather_animation.dart';
+import 'package:simple_weather/utilities/weather_animation.dart';
 
 class WeatherSearchPage extends StatefulWidget {
   const WeatherSearchPage({super.key});
@@ -19,6 +19,7 @@ class _WeatherSearchPageState extends State<WeatherSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: Key('search_page_scaffold'),
       backgroundColor: const Color.fromARGB(255, 36, 36, 36),
       appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 36, 36, 36),
@@ -26,6 +27,7 @@ class _WeatherSearchPageState extends State<WeatherSearchPage> {
           title: _citySearched
               ? null
               : TextField(
+                  key: Key('search_text_field'),
                   controller: TextEditingController(text: _searchedCity),
                   cursorColor: const Color.fromARGB(255, 216, 215, 215),
                   decoration: const InputDecoration(
@@ -48,6 +50,7 @@ class _WeatherSearchPageState extends State<WeatherSearchPage> {
           actions: _citySearched
               ? [
                   IconButton(
+                    key: Key('edit_button'),
                     icon: const Icon(Icons.edit,
                         color: Color.fromARGB(255, 216, 215, 215)),
                     onPressed: () {
@@ -73,12 +76,14 @@ class CurrentWeather extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
+        key: Key('weather_future_builder'),
         future: fetchWeather(city),
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data!.cityName.isNotEmpty) {
             Temperature? weather = snapshot.data;
             return Expanded(
               child: Column(
+                key: Key('weather_column'),
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ListView(
@@ -86,6 +91,7 @@ class CurrentWeather extends StatelessWidget {
                     padding: const EdgeInsets.all(19),
                     children: <Widget>[
                       Column(
+                        key: Key('location_column'),
                         children: <Widget>[
                           const Icon(
                             Icons.location_pin,
@@ -95,6 +101,7 @@ class CurrentWeather extends StatelessWidget {
                           // city name
                           Text(
                             weather?.cityName ?? "Loading city...",
+                            key: Key('search_city_name'),
                             style: GoogleFonts.bebasNeue(
                               color: const Color.fromARGB(255, 216, 215, 215),
                               fontSize: 54,
@@ -105,16 +112,19 @@ class CurrentWeather extends StatelessWidget {
 
                       // animation
                       Lottie.asset(getWeatherAnimation(weather?.mainCondition,
-                          weather?.sunrise, weather?.sunset)),
+                              weather?.sunrise, weather?.sunset),
+                          key: Key('weather_animation')),
 
                       // temperature
                       Column(
+                        key: Key('temperature_column'),
                         children: <Widget>[
                           Text("${weather?.temperature.round()}°".padLeft(4),
                               style: GoogleFonts.bebasNeue(
                                 color: const Color.fromARGB(255, 216, 215, 215),
                                 fontSize: 87,
-                              )),
+                              ),
+                              key: Key('temperature_text')),
 
                           // weather description
                           Text(
@@ -122,6 +132,7 @@ class CurrentWeather extends StatelessWidget {
                             style: const TextStyle(
                               color: Color.fromARGB(255, 202, 202, 202),
                             ),
+                            key: Key('weather_description'),
                           ),
                           const Text(
                             "*Winter",
@@ -149,3 +160,4 @@ class CurrentWeather extends StatelessWidget {
     return await _temperatureService.getWeatherByCity(city);
   }
 }
+

@@ -353,7 +353,7 @@ packages:
     source: hosted
     version: "3.1.0"
   patrol_finders:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: patrol_finders
       sha256: "909a5c28ba1730e5e1e06e06ec78f4ccc49f7e211f3a0919adac552841df19ee"

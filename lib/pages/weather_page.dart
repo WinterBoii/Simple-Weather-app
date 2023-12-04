@@ -9,7 +9,7 @@ import 'package:simple_weather/services/temperature_service.dart';
 
 import '../models/weather_model.dart';
 import '../services/weather_service.dart';
-import '../utiliities/weather_animation.dart';
+import '../utilities/weather_animation.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -74,9 +74,11 @@ class _WeatherPageState extends State<WeatherPage> {
           return const Center(child: Text('Error fetching data'));
         } else {
           return Scaffold(
+            key: Key('weather_scaffold'),
             resizeToAvoidBottomInset: true,
             backgroundColor: const Color.fromARGB(255, 36, 36, 36),
             floatingActionButton: FloatingActionButton(
+              key: Key('search_button'),
               onPressed: () {
                 showSearchPage(context);
               },
@@ -105,6 +107,7 @@ class _WeatherPageState extends State<WeatherPage> {
                           // city name
                           Text(
                             _weather?.cityName ?? "Loading city...",
+                            key: Key('city_name'),
                             style: GoogleFonts.bebasNeue(
                               color: const Color.fromARGB(255, 216, 215, 215),
                               fontSize: 54,
@@ -113,6 +116,7 @@ class _WeatherPageState extends State<WeatherPage> {
                           const SizedBox(
                               width: 5), // Add space between text and icon
                           IconButton(
+                            key: Key('refresh_button'),
                             onPressed: () async {
                               // TODO Add refresh functionality
                               await _fetchWeather();
@@ -171,11 +175,13 @@ class _WeatherPageState extends State<WeatherPage> {
             style: GoogleFonts.bebasNeue(
               color: const Color.fromARGB(255, 216, 215, 215),
               fontSize: 87,
-            )),
+            ),
+            key: Key('temperature_text')),
 
         // weather description
         Text(
-          _temperature?.description ?? "ey",
+          _temperature!.description,
+          key: Key('weather_description'),
           style: const TextStyle(
             color: Color.fromARGB(255, 202, 202, 202),
           ),
