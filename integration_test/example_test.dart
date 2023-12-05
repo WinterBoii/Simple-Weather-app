@@ -7,9 +7,10 @@ void main() {
     ($) async {
       await $.pumpWidgetAndSettle(const MyApp());
 
-      //if (await $.nativeAutomator.isPermissionDialogVisible()) {
+      if (await $.nativeAutomator
+          .isPermissionDialogVisible(timeout: const Duration(seconds: 15))) {
       await $.nativeAutomator.grantPermissionOnlyThisTime();
-      //}
+      }
 
       await $(#city_name).waitUntilVisible();
 
