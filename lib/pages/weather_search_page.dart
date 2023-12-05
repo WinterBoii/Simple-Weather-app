@@ -15,6 +15,8 @@ class WeatherSearchPage extends StatefulWidget {
 class _WeatherSearchPageState extends State<WeatherSearchPage> {
   bool _citySearched = false;
   String _searchedCity = '';
+  // Define a FocusNode
+  FocusNode myFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +26,11 @@ class _WeatherSearchPageState extends State<WeatherSearchPage> {
       appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 36, 36, 36),
           foregroundColor: const Color.fromARGB(255, 216, 215, 215),
-          title: TextField(
+          title: _citySearched
+              ? null
+              : TextField(
                   key: Key('search_text_field'),
+                  focusNode: myFocusNode,
                   controller: TextEditingController(text: _searchedCity),
                   cursorColor: const Color.fromARGB(255, 216, 215, 215),
                   decoration: const InputDecoration(
@@ -36,29 +41,32 @@ class _WeatherSearchPageState extends State<WeatherSearchPage> {
                     hintText: 'Enter city',
                     hintStyle:
                         TextStyle(color: Color.fromARGB(255, 210, 192, 192)),
-            ),
+                  ),
+                  onChanged: (city) {
+                    _searchedCity = city;
+                  },
+                  onSubmitted: (city) {
+                    _searchedCity = city;
+                    setState(() {});
+                  },
                   style: const TextStyle(
                       color: Color.fromARGB(255, 210, 192, 192)),
                 ),
           actions: [
                   IconButton(
-              key: Key('search_button'),
-              icon: Icon(Icons.search,
+              key: Key(_citySearched ? 'edit_button' : 'search_button'),
+              icon: Icon(_citySearched ? Icons.edit : Icons.search,
                   color: const Color.fromARGB(255, 216, 215, 215)),
                     onPressed: () {
-                onSubmitted(_searchedCity);
+                myFocusNode.unfocus();
+                _citySearched = false;
+                setState(() {});
                     },
                   )
                 ]
               ),
       body: CurrentWeather(_searchedCity),
     );
-  }
-
-  void onSubmitted(String city) {
-    _searchedCity = city.trim();
-    _citySearched = true;
-    setState(() {});
   }
 }
 
