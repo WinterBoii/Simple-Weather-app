@@ -24,9 +24,7 @@ class _WeatherSearchPageState extends State<WeatherSearchPage> {
       appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 36, 36, 36),
           foregroundColor: const Color.fromARGB(255, 216, 215, 215),
-          title: _citySearched
-              ? null
-              : TextField(
+          title: TextField(
                   key: Key('search_text_field'),
                   controller: TextEditingController(text: _searchedCity),
                   cursorColor: const Color.fromARGB(255, 216, 215, 215),
@@ -38,30 +36,29 @@ class _WeatherSearchPageState extends State<WeatherSearchPage> {
                     hintText: 'Enter city',
                     hintStyle:
                         TextStyle(color: Color.fromARGB(255, 210, 192, 192)),
-                  ),
-                  onSubmitted: (city) {
-                    _searchedCity = city.trim();
-                    _citySearched = true;
-                    setState(() {});
-                  },
+            ),
                   style: const TextStyle(
                       color: Color.fromARGB(255, 210, 192, 192)),
                 ),
-          actions: _citySearched
-              ? [
+          actions: [
                   IconButton(
-                    key: Key('edit_button'),
-                    icon: const Icon(Icons.edit,
-                        color: Color.fromARGB(255, 216, 215, 215)),
+              key: Key('search_button'),
+              icon: Icon(Icons.search,
+                  color: const Color.fromARGB(255, 216, 215, 215)),
                     onPressed: () {
-                      _citySearched = false;
-                      setState(() {});
+                onSubmitted(_searchedCity);
                     },
                   )
                 ]
-              : []),
+              ),
       body: CurrentWeather(_searchedCity),
     );
+  }
+
+  void onSubmitted(String city) {
+    _searchedCity = city.trim();
+    _citySearched = true;
+    setState(() {});
   }
 }
 
@@ -81,12 +78,12 @@ class CurrentWeather extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data!.cityName.isNotEmpty) {
             Temperature? weather = snapshot.data;
-            return Expanded(
-              child: Column(
-                key: Key('weather_column'),
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ListView(
+            return Column(
+              key: Key('weather_column'),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: ListView(
                     physics: const NeverScrollableScrollPhysics(),
                     padding: const EdgeInsets.all(19),
                     children: <Widget>[
@@ -109,12 +106,13 @@ class CurrentWeather extends StatelessWidget {
                           ),
                         ],
                       ),
-
+                  
                       // animation
-                      Lottie.asset(getWeatherAnimation(weather?.mainCondition,
+                      Lottie.asset(
+                          getWeatherAnimation(weather?.mainCondition,
                               weather?.sunrise, weather?.sunset),
                           key: Key('weather_animation')),
-
+                  
                       // temperature
                       Column(
                         key: Key('temperature_column'),
@@ -125,7 +123,7 @@ class CurrentWeather extends StatelessWidget {
                                 fontSize: 87,
                               ),
                               key: Key('temperature_text')),
-
+                  
                           // weather description
                           Text(
                             weather?.description ?? "ey",
@@ -144,8 +142,8 @@ class CurrentWeather extends StatelessWidget {
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           } else if (city.isNotEmpty) {
             return const Center(child: CircularProgressIndicator());
